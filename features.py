@@ -85,6 +85,7 @@ def extract_features(df):
 
     # Extract day of the week as a categorical feature
     df['day_of_week'] = pd.to_datetime(df['Start_Time'], format='%Y-%m-%d %H:%M:%S').dt.strftime('%A')
+    df['hour'] = pd.to_datetime(df['Start_Time'], format='%Y-%m-%d %H:%M:%S').dt.hour
 
     def get_day_of_week(day_of_week):
         if day_of_week == 'Sunday':
@@ -102,6 +103,17 @@ def extract_features(df):
         elif day_of_week == 'Saturday':
             return 6
 
+    def get_time_of_day(hour):
+        if 5 <= hour < 12:
+            return 0 # morning
+        elif 12 <= hour < 17:
+            return 1 # afternoon
+        elif 17 <= hour < 20:
+            return 2 # evening
+        else:
+            return 3 # night
+
+    df['time_of_day'] = df['hour'].apply(get_time_of_day)
     df['day_of_week'] = df['day_of_week'].apply(get_day_of_week)
 
     # Extract traffic duration in minutes
@@ -109,7 +121,7 @@ def extract_features(df):
     df['End_Time'] = pd.to_datetime(df['End_Time'], format='%Y-%m-%d %H:%M:%S')
     df['Traffic_Duration'] = round((df['End_Time'] - df['Start_Time']).dt.total_seconds() / 60)
 
-    df = df.drop(columns=['Start_Time', 'End_Time'])
+    df = df.drop(columns=['Start_Time', 'End_Time', 'hour'])
 
     return df
 
