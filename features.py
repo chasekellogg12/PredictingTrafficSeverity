@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 
 from sklearn.preprocessing import StandardScaler
+#github test
 
 def remove_missing_data(df):
     """
